@@ -17,9 +17,9 @@ In this article, we will serve you all recent news and important changes in open
 ## %_libexecdir
 
 
-```
-TL;DR
-%_libexecdir macro expands to /usr/libexec now (not /usr/lib)
+```diff
+! TL;DR
+! %_libexecdir macro expands to /usr/libexec now (not /usr/lib)
 ```
 
 
