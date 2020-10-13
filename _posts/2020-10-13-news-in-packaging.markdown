@@ -3,6 +3,9 @@ layout: post
 title:  "News in openSUSE Packaging"
 date:   2020-10-13 14:24:16 +0200
 categories: packaging
+
+# Authors
+authors: vcizek, kstreitova
 ---
 
 If you are interested in openSUSE, sooner or later you will probably learn how packages and specfiles work. But packaging is not static knowledge that you learn once and are good to go. The rules change over time, new macros are created and old ones are erased from history, new file paths are used and the old ones are forgotten. So how can one keep up with these changes?

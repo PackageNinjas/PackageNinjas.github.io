@@ -10,6 +10,16 @@ toc_nav_id: toc-nav
 {%- endif -%}
 </p>
 
+
+{% assign authors = page.authors | split: ", " %}
+<p class="post-author">Written by:
+{% for currentAuthor in authors %}
+  {% assign author = site.data.authors[currentAuthor] %}
+   <a href="{{ author.email }}">{{ author.name }}</a>{% unless forloop.last %}, {% endunless %}
+{% endfor %}
+</p>
+
+
 {{ page.excerpt | markdownify }}
 
 {%- if page.use_toc -%}
