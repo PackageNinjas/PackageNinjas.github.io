@@ -23,16 +23,15 @@ In this article, we will serve you all recent news and important changes in open
 
 ## %_libexecdir
 
+---
+**TL;DR**
+  * `%_libexecdir` macro expands to `/usr/libexec` now (not `/usr/lib`)
 
-```diff
-! TL;DR
-! %_libexecdir macro expands to /usr/libexec now (not /usr/lib)
-```
-
+---
 
 We will start with the most recent change, which is the `%_libexecdir` macro. In the past, it was a standard practice to store binaries that are not intended to be executed directly by users or shell scripts in the `/usr/lib` directory. This has been changed with a release of FHS 3.0 that now [defines](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch04s07.html) that applications should store these internal binaries in the `/usr/libexec` directory.
 
-In openSUSE, the first discussions about changing the `%_libexecdir` macro) from `/usr/lib` to `/usr/libexec` appeared in fall 2019 but it took several months for all affected packages to be fixed and the change to be adopted. It was fully [merged](https://lists.opensuse.org/opensuse-factory/2020-08/msg00226.html) in TW 0825 in August 2020.
+In openSUSE, the first discussions about changing the `%_libexecdir` macro from `/usr/lib` to `/usr/libexec` appeared in fall 2019 but it took several months for all affected packages to be fixed and the change to be adopted. It was fully [merged](https://lists.opensuse.org/opensuse-factory/2020-08/msg00226.html) in TW 0825 in August 2020.
 
 Please note, openSUSE Leap distributions, including upcoming Leap 15.3, still expand `%_libexecdir` to the old `/usr/lib`. 
 
@@ -40,14 +39,14 @@ Please note, openSUSE Leap distributions, including upcoming Leap 15.3, still ex
 ## systemd macros
 
 
-```
-TL;DR
-Use %{?systemd_ordering} instead of %{?systemd_requires} 
-Use pkgconfig(libsystemd)instead of pkgconfig(systemd-devel)
-BuildRequires: systemd-rpm-macros is not needed
-```
+---
+**TL;DR**
 
+  * Use `%{?systemd_ordering}` instead of `%{?systemd_requires}`
+  * Use `pkgconfig(libsystemd)` instead of `pkgconfig(systemd-devel)`
+  * `BuildRequires: systemd-rpm-macros` is not needed
 
+---
 In the past, you've been told that if your package uses `systemd`, you should just add the following lines to your spec file and you are good to go:
 
 
@@ -88,7 +87,7 @@ Unless you need to explicitly call the `systemctl` command from the specfile (wh
 
 Also note, that `systemd-rpm-macros` has been required by the `rpm` package for some time, so it's not necessary to explicitly require it. You can safely omit it unless you are afraid that `rpm` will drop it in the future, which is highly unlikely.
 
-The last is the `BuildRequires,` this is needed in cases where your package needs to link against `systemd` libraries. In this case, you should use:
+The last is the `BuildRequires`, this is needed in cases where your package needs to link against `systemd` libraries. In this case, you should use:
 
 
 ```
@@ -110,12 +109,13 @@ as the new variant can help to shorten the build chain in OBS.
 ## Cross-distribution macros
 
 
-```
-TL;DR
-%leap_version macro is deprecated
-See this table for all distribution macros and their values for specific distros
-```
+---
+**TL;DR**
 
+  * `%leap_version` macro is deprecated
+  * See this [table](https://en.opensuse.org/openSUSE:Packaging_for_Leap#RPM_Distro_Version_Macros) for all distribution macros and their values for specific distros
+
+---
 
 It’s very common that you want to build your package for multiple target distributions. But if you want to support both bleeding-edge Tumbleweed and Leap or SLE, you need to adjust your specfile accordingly That is why you need to know the distribution version macros.
 
@@ -147,9 +147,7 @@ The current Tumbleweed release (which is changing, obviously) can be identified 
 ```
 
 
-In general, if you want to show the value of these macros on your system, you can do it via
-
-`rpm --eval &lt;macro>`:
+In general, if you want to show the value of these macros on your system, you can do it via `rpm --eval` macro:
 
 
 ```
@@ -161,32 +159,32 @@ $ rpm --eval %suse_version
 
 ## Deprecated macros
 
+---
+**TL;DR**
 
-```
-TL;DR
 These macros are deprecated
-%install_info / %install_info_delete
-%desktop_database_post / %desktop_database_postun
-%icon_theme_cache_post / %icon_theme_cache_postun
-%glib2_gsettings_schema
-%make_jobs (is now known as %cmake_build or %make_build)
-```
+  * `%install_info` / `%install_info_delete`
+  * `%desktop_database_post` / `%desktop_database_postun`
+  * `%icon_theme_cache_post` / `%icon_theme_cache_postun`
+  * `%glib2_gsettings_schema`
+  * `%make_jobs` (is now known as `%cmake_build` or `%make_build`)
 
+---
 
 If you have been interested in packaging for some time, you probably learned a lot of macros. The bad thing is that some of them shouldn’t be used anymore. In this section, we will cover the most common of them.
 
 
-### database/cache updating macros
+### Database/cache updating macros
 
 The biggest group of deprecated macros is probably those that called commands for updating databases and caches when new files appeared in specific directory:
 
 
 
-*   `%install_info / %install_info_delete`
+*   `%install_info` / `%install_info_delete`
     *   update info/dir entries
-*   `%desktop_database_post / %desktop_database_postun`
+*   `%desktop_database_post` / `%desktop_database_postun`
     *   update desktop database cache when `.desktop` files is added/removed to/from `/usr/share/applications`
-*   `%icon_theme_cache_post / %icon_theme_cache_postun`
+*   `%icon_theme_cache_post` / `%icon_theme_cache_postun`
     *   update the icon cache when icon is added to  `/usr/share/icons`
 *   `%glib2_gsettings_schema`
     *   compile schemas installed to `/usr/share/glib-2.0/schemas`
@@ -203,24 +201,26 @@ For example, in the past whenever you installed a new `.desktop` file in your pa
 ```
 
 
-Since 2017, these macros started being [replaced](https://lists.opensuse.org/opensuse-factory/2017-06/msg00898.html) with file triggers, which is a new feature of RPM 4.13. See File triggers section for more info.
+Since 2017, these macros started being [replaced](https://lists.opensuse.org/opensuse-factory/2017-06/msg00898.html) with file triggers, which is a new feature of RPM 4.13. See [File triggers](#file-triggers) section for more info.
 
 
 ### %make_jobs
 
-The %make_jobs macro was initially used in cmake packaging, but was later adopted in a number of other packages, confusingly sometimes with a slightly different definition. To make matters more confusing it also ended up being more complex than the expected `/usr/bin/make -jX`. Because of this and to bring the macro more inline with other macros such as meson's, %make_jobs has been replaced with %cmake_build when using cmake and %make_build for all other usages.
+The `%make_jobs` macro was initially used in `cmake` packaging, but was later adopted in a number of other packages, confusingly sometimes with a slightly different definition. To make matters more confusing it also ended up being more complex than the expected `/usr/bin/make -jX`. Because of this and to bring the macro more inline with other macros such as meson's, `%make_jobs` has been replaced with `%cmake_build` when using `cmake` and `%make_build` for all other usages.
 
 In the past, you called: `%cmake`, `%make_jobs,` and `%cmake_install.`
 
-Now it’s more coherent and you call:  %cmake, %cmake_build and %cmake_install when using cmake and just replace %make_jobs with %make_build in other cases
+Now it’s more coherent and you call:  `%cmake`, `%cmake_build` and `%cmake_install` when using cmake and just replace `%make_jobs` with `%make_build` in other cases.
 
 For completeness, we will add that the naming is also nicely aligned with the meson and automake macros, that are:
 
-%meson, %meson_build and %meson_install. or
+`%meson`, `%meson_build` and `%meson_install`
 
-%configure, %make_build and %make_install.
+ or
 
-The %make_jobs macro is still provided by KDE Framework kf5-filesystem package and is used by about 250 Factory packages, but it's use is being phased out.
+`%configure`, `%make_build` and `%make_install`.
+
+The `%make_jobs` macro is still provided by KDE Framework `kf5-filesystem` package and is used by about 250 Factory packages, but it's use is being phased out.
 
 
 # Tags
@@ -229,10 +229,12 @@ The %make_jobs macro is still provided by KDE Framework kf5-filesystem package a
 ## Group: tag
 
 
-```
-TL;DR
-Group: tag is optional now
-```
+---
+**TL;DR**
+
+  * `Group:` tag is optional now
+
+---
 
 
 Maybe you noticed a wild discussion about removing `Group:` tag that hit the opensuse-factory mailing list in Fall 2019. It arouses emotions to such an extent that the openSUSE Board had to step in and helped to resolve this conflict. 
@@ -280,12 +282,13 @@ The following paragraphs present a couple of the most interesting features intro
 
 ## File Triggers
 
+---
+**TL;DR**
 
-```
-TL;DR
-File trigger is a scriptlet that gets executed whenever a package installs/removes a file in a specific location
-Used in Factory for texinfo, glib schemas, mime, icons, and desktop files, so your package doesn't have to call database/cache updating macros anymore
-```
+  * File trigger is a scriptlet that gets executed whenever a package installs/removes a file in a specific location
+  * Used e.g. in Factory for `texinfo`, `glib schemas`, `mime`, `icons`, and `desktop` files, so your package doesn't have to call database/cache updating macros anymore
+
+---
 
 
 RPM 4.13 introduced `file triggers`, rpm scriptlets that get executed whenever a package installs or removes a file in a specific location (and also if a package with the trigger gets installed/removed).
@@ -294,16 +297,14 @@ The main advantage of this concept is that a single package introduces a file tr
 
 The trigger types are:
 
-
-
 *   `filetrigger{in, un, postun}`
-*   `transfiletrigger{in`,  `un`,  `postun`}
+*   `transfiletrigger{in, un, postun}`
 
 The `*in/*un/*postun` scriptlets are executed similarly to regular rpm scriptlets, before package installation/uninstallation/after uninstallation, depending on the variant.
 
 The` trans* `variants get executed once per transaction, after all the packages with files matching the trigger get processed. 
 
-Example (Factory `shared-mime-info`)
+**Example** (Factory `shared-mime-info`):
 
 
 ```
@@ -315,19 +316,20 @@ export PKGSYSTEM_ENABLE_FSYNC=0
 
 This file trigger will update the mime database right after the installation of a package that contains a file under `/usr/share/mime`. The file trigger will be executed once for each package (no matter how many files in the package match).
 
-File triggers can easily replace database/cache updating macros (like e.g. `%icon_theme_cache_post)`. This approach has been [used in Factory since 2017](https://lists.opensuse.org/opensuse-factory/2017-06/msg00898.html). File triggers are used for processing icons, mime and desktop files, glib schemas, and others.
+File triggers can easily replace database/cache updating macros (like e.g. `%icon_theme_cache_post`). This approach has been [used in Factory since 2017](https://lists.opensuse.org/opensuse-factory/2017-06/msg00898.html). File triggers are used for processing icons, mime and desktop files, glib schemas, and others.
 
 It’s highly possible that you haven’t noticed this change at all, as in general having these database/cache updating macros in your specfile doesn’t harm anything now. The change has been made in corresponding packages (`texinfo`, `shared-mime-info`, `desktop-file-utils`, `glib2`) by adding a file trigger while all these old macros are now expanded to command without action. So you can safely remove them from your specfiles.
 
 
 ## %autopatch and %autosetup
 
+---
+**TL;DR**
 
-```
-TL;DR
-Use %autopatch to automatically apply all patches in the spec file
-Use %autosetup to automatically run %setup and %autopatch
-```
+  * Use `%autopatch` to automatically apply all patches in the spec file
+  * Use `%autosetup` to automatically run `%setup` and `%autopatch`
+
+---
 
 
 The old and classic way to apply patches was:
@@ -356,7 +358,7 @@ With the recent RPM, you can use `%autosetup` and `%autopatch` macros to automat
 
 It applies all patches from the spec. The disadvantage is that it’s not natively usable with conditional patches or patches with differing fuzz levels.
 
-Example (Factory `openssl-1_1.spec`):
+**Example** (Factory `openssl-1_1.spec`):
 
 
 ```
@@ -380,11 +382,11 @@ The most powerful is the `%autosetup` macro that combines `%setup` and `%autopat
 
 *   `-v` for verbose source unpacking, the quiet mode is the default, so `-q` is not applicable
 *   `-N` disables automatic patch application. The patches can be later applied manually using `%patch` or with `%autopatch`. It comes in handy in cases where some kind of preprocessing is needed on the upstream sources before applying the patches.
-*   `-S` specifies a VCS to use in the build directory. Supported are for example "git", "hg", or "quilt". The default is "patch", where the patches are simply applied in the directory using patch. Setting "git" will create a git repository within the build directory with each patch represented as a git commit, which can be useful e.g. for bisecting the patches
+*   `-S` specifies a VCS to use in the build directory. Supported are for example  `git`, `hg`, or `quilt`. The default is `patch`, where the patches are simply applied in the directory using patch. Setting `git` will create a git repository within the build directory with each patch represented as a git commit, which can be useful e.g. for bisecting the patches
 
 So the simplest patch application using `%autosetup` will look like this.
 
-Example (Factory `openssl-1_1`):
+**Example** (Factory `openssl-1_1`):
 
 
 ```
@@ -401,18 +403,19 @@ Patch3:     	openssl-pkgconfig.patch
 ## %patchlist and %sourcelist
 
 
-```
-TL;DR
-Use %patchlist section directive for marking a plain list of patches
-Use %sourcelist section directive for marking a plain list of sources
-Then use %autosetup instead of %setup and %patch<number>
-```
+---
+**TL;DR**
+
+  * Use `%patchlist` section directive for marking a plain list of patches
+  * Use `%sourcelist` section directive for marking a plain list of sources
+  * Then use `%autosetup` instead of %setup and `%patch<number>`
+
+---
+
+These are new spec file sections for declaring patches and sources with minimal boilerplate. They're intended to be used in conjunction with` %autopatch` or `%autosetup`.
 
 
-These are new spec file sections for declaring patches and sources with minimal boilerplate. They're intended to be used in conjunction with` %autopatch` or `%autosetup`. \
-
-
-Example - normal way (Factory `openssl-1_1`):
+**Example** - normal way (Factory `openssl-1_1`):
 
 
 ```
@@ -433,7 +436,7 @@ Patch3:     	openssl-pkgconfig.patch
 
 The files need to be tagged with numbers, so adding a patch in the middle of a series requires renumbering all the consecutive tags.
 
-Example - with `%sourcelist`/`%patchlist`:
+**Example** - with `%sourcelist`/`%patchlist`:
 
 
 ```
@@ -460,15 +463,17 @@ Here the source files don't need any tagging. The patches are then applied by `%
 ## %elif
 
 
-```
-TL;DR
-RPM now supports %elif, %elifos and %elifarch
-```
+---
+**TL;DR**
+
+  * RPM now supports `%elif`, `%elifos` and `%elifarch`
+
+---
 
 
 After 22 years of development, RPM 4.15 finally implemented `%elif`. It's now possible to simplify conditions which were only possible with another` %if `and `%else` pair.
 
-Example: Using `%if` and `%else` only (`Java:packages/ant`):
+**Example** Using `%if` and `%else` only (`Java:packages/ant`):
 
 
 ```
@@ -492,7 +497,7 @@ Apache Ant is a Java-based build tool.
 ```
 
 
-Example: Using `%elif`:
+**Example** Using `%elif`:
 
 
 ```
@@ -514,30 +519,32 @@ Apache Ant is a Java-based build tool.
 ```
 
 
-The "`else if`" versions were implemented also for `%ifos` (`%elifos`) and `%ifarch` (`%elifarch`).
+The `else if` versions were implemented also for `%ifos` (`%elifos`) and `%ifarch` (`%elifarch`).
 
 
 ## Boolean dependencies
 
 
-```
-TL;DR
-Factory now supports boolean dependency operators that allow rich dependencies
-Example: Requires: (sles-release or openSUSE-release)
-```
+---
+**TL;DR**
+
+  * Factory now supports boolean dependency operators that allow rich dependencies
+  * Example: `Requires: (sles-release or openSUSE-release)`
+
+---
 
 
-RPM 4.13 introduced support for boolean dependencies (also called "rich dependencies"). These expressions are usable in all dependency tags except `Provides.` `T`his includes `Requires`, `Recommends`, `Suggests`, `Supplements`, `Enhances`, and `Conflicts`. Boolean expressions are always enclosed with parentheses. The dependency string can contain package names, comparison, and version description.
+RPM 4.13 introduced support for boolean dependencies (also called "rich dependencies"). These expressions are usable in all dependency tags except `Provides.` This includes `Requires`, `Recommends`, `Suggests`, `Supplements`, `Enhances`, and `Conflicts`. Boolean expressions are always enclosed with parentheses. The dependency string can contain package names, comparison, and version description.
 
 How does it help? It greatly simplifies conditional dependencies.
 
-Practical example:
+**Practical example**:
 
-Your package needs either of two packages pack1 or pack2 to work. Until recently, there wasn't an elegant way to express this kind of dependency in RPM.
+Your package needs either of two packages `pack1` or `pack2` to work. Until recently, there wasn't an elegant way to express this kind of dependency in RPM.
 
-The idiomatic way was to introduce a new capability, which both pack1 and pack2 would provide, and which can then be required from your package.
+The idiomatic way was to introduce a new capability, which both `pack1` and `pack2` would provide, and which can then be required from your package.
 
-Both pack1 and pack2 packages would need adding:
+Both `pack1` and `pack2` packages would need adding:
 
 
 ```
@@ -603,7 +610,7 @@ RPM 4.14 added operators which work on single packages. Unlike the operators abo
 
 The operands can be nested. They need to be surrounded by parentheses, except for chains of `and` or `or` operators.
 
-Examples:
+**Examples**:
 
 
 ```
@@ -612,31 +619,31 @@ Requires: ((pack1) or (pack2 without func2))
 ```
 
 
-Until recently, Factory only allowed boolean dependencies in `Recommends`/`Suggests` (aka soft dependencies), as it would have otherwise caused issues when doing` zypper dup` from older distros. Now all operators above are supported.
+Until recently, Factory only allowed boolean dependencies in `Recommends`/`Suggests` (aka soft dependencies), as it would have otherwise caused issues when doing `zypper dup` from older distros. Now all operators above are supported.
 
 
 ## %license
 
 
-```
-TL;DR
-Pack license files via %license directive, not %doc
-```
+---
+**TL;DR**
+
+  * Pack license files via `%license` directive, not `%doc`
+
+---
 
 
 `A %license` directive was added to RPM in [4.11.0](https://lwn.net/Articles/535284/) (2013) but openSUSE and other distributions adopted it later, in [2016](https://lists.opensuse.org/opensuse-factory/2016-02/msg00167.html). The main reason for it is to allow easy separation of licenses from normal documentation. Before this directive, license texts used to be marked with the  `%doc` directive, that managed copying of the license to the `%_defaultdocdir` (`/usr/share/doc/packages)`. With `%license`, it’s nicely separated as is copied to `%_defaultlicensedir` (`/usr/share/licenses`).
 
 That's also useful for limited systems (e.g. containers), which are built without doc files, but still need to ship package licenses for legal reasons.
 
-Example
-
+**Example**:
 
 ```
 %files
 %license LICENSE COPYING
 %doc NEWS README.SUSE
 ```
-
 
 The license files are annotated in the rpm, which allows a search for the license files of specific package:
 
@@ -654,11 +661,13 @@ $ rpm -qL sudo
 ## Configuration files in /etc and /usr/etc 
 
 
-```
-TL;DR
-/usr/etc is the new directory for the distribution provided configuration files
-/etc directory contain configuration files changed by administrator
-```
+---
+**TL;DR**
+
+  * `/usr/etc` is the new directory for the distribution provided configuration files
+  * `/etc` directory contain configuration files changed by administrator
+
+---
 
 
 Historically, configuration files were always installed in the `/etc` directory. Then if you edited this configuration file and updated the package, you often ended up with `.rpmsave` or `.rpmnew` extra files that you had to solve manually.
@@ -686,11 +695,7 @@ Also, there is a new RPM macro that refers to the `/usr/etc` location:
 The `osc` command line tool received several new features as well. Let’s have a quick look at the most interesting changes.
 
 
-```
-
-
 ### osc maintained --version
-```
 
 
 New `--version` option prints versions of the maintained package in each codestream, which is very useful e.g. when you want to find out which codestreams are affected by a specific issue. The only problem is that it’s not very reliable yet - sometimes it prints just "`unknown`".
@@ -703,17 +708,12 @@ openSUSE:Leap:15.2:Update/sudo (version: 1.8.22)
 ```
 
 
-
-```
-
-
 ### osc request --incoming
-```
 
 
 New `--incoming` option for request command shows only requests/reviews where the project is the target.
 
-Example - list all incoming request in state new or review for Base:System project
+**Example** List all incoming request in state new or review for `Base:System` project:
 
 
 ```
@@ -755,7 +755,7 @@ This is a change you probably noticed. If you create a changelog entry via `osc 
 
 Also the `rdiff` subcommand comes with new options. Probably the most useful is `rdiff --issues-only` that instead of printing the whole diff, shows just a list of fixed (mentioned really) issues (bugs, CVEs, Jiras):
 
-Example: osc rdiff --issues-only
+**Example** `osc rdiff --issues-only`:
 
 
 ```
@@ -768,14 +768,10 @@ boo#1172663
 ```
 
 
-More new options were added for the `osc diff` command. The first is ` --unexpand that `performs a local diff, ignoring linked package sources. The second is `diff --meta` that performs a diff only on meta files.
-
-
-```
+More new options were added for the `osc diff` command. The first is `--unexpand` that performs a local diff, ignoring linked package sources. The second is `diff --meta` that performs a diff only on meta files.
 
 
 ### osc blame
-```
 
 
 `osc` finally comes with a `blame` command that you probably know from `git`. It shows who last modified each line of a tracked file.
@@ -791,7 +787,7 @@ osc blame <project> <package> <file>
 
 The drawback is that it shows the user who checked in the revision, such as the person who accepted the submission, not its actual author. But it also shows the revision number in the first column, so you can easily show the specific revision with the original author.
 
-Example:
+**Example**:
 
 
 ```
@@ -805,7 +801,7 @@ Example:
 ```
 
 
-Let's say we're interested in line 63, where DH_compute_key() is called. It was last changed in revision 5, so we'll examine that revision:
+Let's say we're interested in line 63, where `DH_compute_key()` is called. It was last changed in revision 5, so we'll examine that revision:
 
 
 ```
@@ -839,14 +835,10 @@ osc meta pkg <project> <package> --blame
 ```
 
 
-Please note that It works on project and package metadata but it doesn't work on attributes.
-
-
-```
+Please note that it works on project and package metadata but it doesn't work on attributes.
 
 
 ### osc comment
-```
 
 
 `osc` allows you to work with comments on projects, packages, and requests from the command line. That's particularly useful for writing bots and other automatic handling.
@@ -901,7 +893,7 @@ openSUSE_Factory_zSystems  s390x                   	18
 
 This command prints out detailed information about the worker's hardware, which can be useful when searching for proper build constraints.
 
-Example:
+**Example**:
 
 
 ```
@@ -915,17 +907,19 @@ It will print `lamb51's` kernel version, CPU flags, amount of CPUs, and availabl
 ## Multibuild
 
 
-```
-TL;DR
-multibuild is an OBS feature that allows you to build the same spec file with different flavors (e.g. once with GUI and then without GUI)
-```
+---
+**TL;DR**
+
+  * Multibuild is an OBS feature that allows you to build the same spec file with different flavors (e.g. once with GUI and then without GUI)
+
+---
 
 
 `multibuild`  is an OBS feature introduced in [OBS 2.8 (2017)](https://openbuildservice.org/2017/04/07/version-2.8/)  that offers the ability to build the same source in the same repo with different flavors. Such a spec file is easier to maintain than separate spec files for each flavor.
 
 The flavors are defined in a `_multibuild` `xml` file in the package source directory. In addition to the normal package, each of the specified flavors will be built for each repository and architecture.
 
-Example of a `_multibuild` file (from Factory `python-pbr`):
+**Example** of a `_multibuild` file (from Factory `python-pbr`):
 
 
 ```
@@ -935,7 +929,7 @@ Example of a `_multibuild` file (from Factory `python-pbr`):
 ```
 
 
-Here OBS will build the regular `python-pbr` package and additionally the `test` flavored` `RPM. Users can then distinguish the different flavors in spec using and perform corresponding actions (Adjusting BuildRequires, package names/descriptions, turning on additional build switches, etc).
+Here OBS will build the regular `python-pbr` package and additionally the `test` flavored RPM. Users can then distinguish the different flavors in spec using and perform corresponding actions (adjusting `BuildRequires`, package names/descriptions, turning on additional build switches, etc.).
 
 Here we can see, that an additional flavor is getting built:
 
@@ -947,7 +941,7 @@ standard         	x86_64 	python-pbr:test            	succeeded
 ```
 
 
-Example of spec file usage (`python-pbr` again):
+**Example** of spec file usage (`python-pbr` again):
 
 
 ```
@@ -967,19 +961,21 @@ First, the spec defines a `flavor` macro as the value it got from OBS. Then it b
 
 If you need an inspiration for your package, you can have a look at the following packages:
 
-python39, libssh, python-pbr, or glibc.
+`python39`, `libssh`, `python-pbr`, or `glibc`.
 
 
 # Oldies
 
 
-```
-TL;DR
-PreReq is now Requires(pre)
-Use /run, not /var/run
-/bin, /sbin, /lib and /lib64 were merged into their counterpart directories under /usr
-SysV is dead, use systemd
-```
+---
+**TL;DR**
+
+  * `PreReq` is now `Requires(pre)`
+  * Use `/run`, not `/var/run`
+  * `/bin`, `/sbin`, `/lib` and `/lib64` were merged into their counterpart directories under `/usr`
+  * `SysV` is dead, use `systemd`
+
+---
 
 
 We realize that the changes described below are very, _very_, VERY old. But we put this section here anyway as we are still seeing it in some spec files from time to time. So let’s take it quickly.
@@ -992,7 +988,7 @@ We realize that the changes described below are very, _very_, VERY old. But we p
 
 ## /var/run → /run
 
-Since openSUSE 12.2 (2012), `/run` directory was top-levelled as it was agreed across the distributions, that it doesn’t belong under` /var.` It’s still symlinked for backwards compatibility but you should definitely use `/run` (`%_rundir macro`).
+Since openSUSE 12.2 (2012), `/run` directory was top-levelled as it was agreed across the distributions, that it doesn’t belong under` /var.` It’s still symlinked for backwards compatibility but you should definitely use `/run` (`%_rundir` macro).
 
 
 ## /usr Merge
@@ -1010,11 +1006,13 @@ The only excuse for missing the fact that SysV is dead is just that you’ve bee
 # Automatic tools for cleaning
 
 
-```
-TL;DR
-Call spec-cleaner -i mypackage.spec to clean your specfile according to the openSUSE style guide.
-Call rpmlint mypackage.rpm or inspect the rpmlint report generated after the OBS build for common packaging errors/warnings.
-```
+---
+**TL;DR**
+
+  * Call `spec-cleaner -i mypackage.spec` to clean your specfile according to the openSUSE style guide.
+  * Call `rpmlint mypackage.rpm` or inspect the rpmlint report generated after the OBS build for common packaging errors/warnings.
+
+---
 
 
 If you read as far as here, you are probably a bit overwhelmed with all these new things in packaging. Maybe you ask yourself how you should remember all of it or more importantly, how you should keep all your maintained packages in consistency with all these changes. We have good news for you. There are automated tools for it.
@@ -1022,7 +1020,7 @@ If you read as far as here, you are probably a bit overwhelmed with all these ne
 
 ## spec-cleaner
 
-<code>[spec-cleaner](https://github.com/rpm-software-management/spec-cleaner)</code> is a tool that cleans the RPM spec file according to the style guide. It can put the lines in the right order, transform hardcoded paths with the correct macros and mainly replace all old macros to new ones. And it can do much more.
+[spec-cleaner](https://github.com/rpm-software-management/spec-cleaner) is a tool that cleans the RPM spec file according to the style guide. It can put the lines in the right order, transform hardcoded paths with the correct macros and mainly replace all old macros to new ones. And it can do much more.
 
 It’s also very easy to use it, just call
 
@@ -1045,7 +1043,7 @@ $ spec-cleaner -d mypackage.spec
 
 ## rpmlint
 
-Another tool that will help you keep your package in a good shape is <code>[rpmlint](https://github.com/rpm-software-management/rpmlint)</code>. It checks common errors in RPM packages and specfiles. It can find file duplicates, check that  binaries are in the proper location, keep an eye on correct libraries, systemd, tmpfiles packaging and much more. Inspecting your package from top to bottom, it reports any error or warning.
+Another tool that will help you keep your package in a good shape is [rpmlint](https://github.com/rpm-software-management/rpmlint). It checks common errors in RPM packages and specfiles. It can find file duplicates, check that  binaries are in the proper location, keep an eye on correct libraries, systemd, tmpfiles packaging and much more. Inspecting your package from top to bottom, it reports any error or warning.
 
 `rpmlint` runs automatically during the OBS build so it can fail the whole build if there are serious problems. It works as a tool for enforcing specific standards in packages built within OBS. If you want to run it on your own, call:
 
@@ -1060,7 +1058,6 @@ Both `spec-cleaner` and `rpmlint` implement the new packaging changes and new ru
 
 # Acknowledgment
 
-Thanks, Simon Lees, Tomáš Chvátal, and Dominique Leuenberger for suggestions, corrections, and proofreading.
-
+Thanks, [Simon Lees](mailto:sflees@suse.de), [Tomáš Chvátal](mailto:tchvatal@suse.com), and [Dominique Leuenberger](mailto:dimstar@opensuse.org) for suggestions, corrections, and proofreading.
 
 
