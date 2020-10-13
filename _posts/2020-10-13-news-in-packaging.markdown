@@ -5,10 +5,14 @@ date:   2020-10-13 14:24:16 +0200
 categories: packaging
 ---
 
-
 If you are interested in openSUSE, sooner or later you will probably learn how packages and specfiles work. But packaging is not static knowledge that you learn once and are good to go. The rules change over time, new macros are created and old ones are erased from history, new file paths are used and the old ones are forgotten. So how can one keep up with these changes?
 
 In this article, we will serve you all recent news and important changes in openSUSE packaging on a silver platter. Whether you are a pro package maintainer or just a casual packager who wants to catch up, you will definitely find something you didn’t know here. We promise.
+
+
+**Table of contents**
+* TOC
+{:toc}
 
 
 # openSUSE macros
@@ -1049,11 +1053,6 @@ $ rpmlint mypackage.rpm
 
 
 Both `spec-cleaner` and `rpmlint` implement the new packaging changes and new rules as soon as possible. But it’s possible that maintainers may miss something. In that case, feel free to report it as an issue on their github.
-
-
-# Conclusion
-
-The purpose of this article was to put all the recent changes in openSUSE packaging together and summarize it in a structured and clear way. We hope that it can help all packagers who have trouble keeping up with changes that are often only discussed in mailing lists or buried deep in the openSUSE wiki.
 
 
 # Acknowledgment
