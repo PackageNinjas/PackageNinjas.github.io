@@ -1,0 +1,21 @@
+---
+layout: default
+---
+
+{{ content }}
+
+<h2>Latest Posts</h2>
+
+<ul class="post-list">
+{%- for post in site.posts -%}
+  <li>
+    <span class="post-meta">{{ post.date | date: site.date_format }}</span>
+
+    <h2>
+      <a class="post-link" href="{{ post.url | relative_url }}" title="{{ post.title }}">{{ post.title | escape }}</a>
+    </h2>
+
+    <span>{{ post.excerpt | markdownify | truncatewords: 50 }}</span>
+  </li>
+{%- endfor -%}
+</ul>
