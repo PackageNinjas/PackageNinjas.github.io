@@ -10,7 +10,7 @@ authors: vcizek, kstreitova
 
 If you are interested in openSUSE, sooner or later you will probably learn how packages and specfiles work. But packaging is not static knowledge that you learn once and are good to go. The rules change over time, new macros are created and old ones are erased from history, new file paths are used and the old ones are forgotten. So how can one keep up with these changes?
 
-In this article, we will serve you all recent news and important changes in openSUSE packaging on a silver platter. Whether you are a pro package maintainer or just a casual packager who wants to catch up, you will definitely find something you didn’t know here. We promise.
+In this article, we will serve you with all recent news and important changes in openSUSE packaging on a silver platter. Whether you are a pro package maintainer or just a casual packager who wants to catch up, you will definitely find something you didn’t know here. We promise.
 
 
 
@@ -221,13 +221,13 @@ Now it’s more coherent and you call:  `%cmake`, `%cmake_build`, and `%cmake_in
 
 For completeness, we will add that the naming is also nicely aligned with the meson and automake macros, that are:
 
-`%meson`, `%meson_build` and `%meson_install`
+`%meson`, `%meson_build`, and `%meson_install`
 
  or
 
 `%configure`, `%make_build`, and `%make_install`.
 
-The `%make_jobs` macro is still provided by KDE Framework `kf5-filesystem` package and is used by about 250 Factory packages, but it's use is being phased out.
+The `%make_jobs` macro is still provided by KDE Framework `kf5-filesystem` package and is used by about 250 Factory packages, but its use is being phased out.
 
 
 # Paths and Tags
@@ -240,7 +240,7 @@ The `%make_jobs` macro is still provided by KDE Framework `kf5-filesystem` packa
 **TL;DR**
 
   * `/usr/etc` will be the new directory for the distribution provided configuration files
-  * `/etc` directory will contain configuration files changed by administrator
+  * `/etc` directory will contain configuration files changed by an administrator
 
 ---
 
@@ -249,7 +249,7 @@ Historically, configuration files were always installed in the `/etc` directory.
 
 Due to this suboptimal situation and mainly because of the need to fulfill new requirements of [transactional updates](https://en.opensuse.org/openSUSE:Packaging_for_transactional-updates) (atomic updates), the handling of configuration files had to be changed.
 
-[The new solution](https://en.opensuse.org/openSUSE:Packaging_UsrEtc) is to separate distribution provided configuration (`/usr/etc`) that is not modifiable and host specific configuration changed by  admins (`/etc`).
+[The new solution](https://en.opensuse.org/openSUSE:Packaging_UsrEtc) is to separate distribution provided configuration (`/usr/etc`) that is not modifiable and host-specific configuration changed by  admins (`/etc`).
  
 This change of course requires a lot of work. First, the applications per se need to be adjusted to read the configuration from multiple locations rather than just good old `/etc` and there are of course a lot of packaging changes needed as well. There are [3 variants](https://en.opensuse.org/openSUSE:Packaging_UsrEtc#Variant_1_.28ideal_case.29) of how to implement the change within packaging and you as a packager should choose one that fits the best for your package.
 
@@ -357,7 +357,7 @@ This file trigger will update the mime database right after the installation of 
 
 File triggers can easily replace database/cache updating macros (like e.g. `%icon_theme_cache_post`). This approach has been [used in Factory since 2017](https://lists.opensuse.org/opensuse-factory/2017-06/msg00898.html). File triggers are used for processing icons, mime and desktop files, glib schemas, and others.
 
-It’s highly possible that you haven’t noticed this change at all, as in general having these database/cache updating macros in your specfile doesn’t harm anything now. The change has been made in corresponding packages (`texinfo`, `shared-mime-info`, `desktop-file-utils`, `glib2`) by adding a file trigger while all these old macros are now expanded to command without action. So you can safely remove them from your specfiles.
+You probably haven’t noticed this change at all, as in general having these database/cache updating macros in your specfile doesn’t harm anything now. The change has been made in corresponding packages (`texinfo`, `shared-mime-info`, `desktop-file-utils`, `glib2`) by adding a file trigger while all these old macros are now expanded to command without action. So you can safely remove them from your specfiles.
 
 
 ## %autopatch and %autosetup
@@ -699,7 +699,7 @@ $ rpm -qL sudo
 
 ## New osc options
 
-The `osc` command line tool received several new features as well. Let’s have a quick look at the most interesting changes.
+The `osc` command-line tool received several new features as well. Let’s have a quick look at the most interesting changes.
 
 
 ### osc maintained --version
@@ -834,7 +834,7 @@ $ osc rq show -b 227064
 ```
 
 
-You can also blame the meta files and show the author of each line of the meta file, where it shows the author, as the meta data is edited directly.
+You can also blame the meta files and show the author of each line of the meta file, where it shows the author, as the metadata is edited directly.
 
 
 ```
@@ -995,7 +995,7 @@ We realize that the changes described below are very, _very_, VERY old. But we p
 
 ## /var/run → /run
 
-Since openSUSE 12.2 (2012), `/run` directory was top-levelled as it was agreed across the distributions, that it doesn’t belong under` /var.` It’s still symlinked for backward compatibility but you should definitely use `/run` (`%_rundir` macro).
+Since openSUSE 12.2 (2012), `/run` directory was top-leveled as it was agreed across the distributions, that it doesn’t belong under` /var.` It’s still symlinked for backward compatibility but you should definitely use `/run` (`%_rundir` macro).
 
 
 ## /usr Merge
@@ -1027,7 +1027,7 @@ If you read as far as here, you are probably a bit overwhelmed with all these ne
 
 ## spec-cleaner
 
-[spec-cleaner](https://github.com/rpm-software-management/spec-cleaner) is a tool that cleans the RPM spec file according to the style guide. It can put the lines in the right order, transform hardcoded paths with the correct macros and mainly replace all old macros to new ones. And it can do much more.
+[spec-cleaner](https://github.com/rpm-software-management/spec-cleaner) is a tool that cleans the RPM spec file according to the style guide. It can put the lines in the right order, transform hardcoded paths with the correct macros, and mainly replace all old macros with new ones. And it can do much more.
 
 It’s also very easy to use it, just call
 
