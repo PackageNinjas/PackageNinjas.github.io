@@ -13,12 +13,19 @@ If you are interested in openSUSE, sooner or later you will probably learn how p
 In this article, we will serve you all recent news and important changes in openSUSE packaging on a silver platter. Whether you are a pro package maintainer or just a casual packager who wants to catch up, you will definitely find something you didn’t know here. We promise.
 
 
+
 **Table of contents**
 * TOC
 {:toc}
 
 
 # openSUSE macros
+
+
+<p align="center">
+  <img src="/assets/geeko-color.png">
+</p>
+
 
 
 ## %_libexecdir
@@ -60,7 +67,7 @@ Times are changing, though, and modern times require a bit of a different approa
 
 
 ```
-rpm --eval %{?systemd_requires}
+$ rpm --eval %{?systemd_requires}
 
 Requires(pre): systemd 
 Requires(post): systemd 
@@ -73,7 +80,7 @@ This creates a hard dependency on `systemd`. In the case of containers, this can
 
 
 ```
-rpm --eval %{?systemd_ordering}
+$ rpm --eval %{?systemd_ordering}
 
 OrderWithRequires(post): systemd 
 OrderWithRequires(preun): systemd 
@@ -117,7 +124,7 @@ as the new variant can help to shorten the build chain in OBS.
 
 ---
 
-It’s very common that you want to build your package for multiple target distributions. But if you want to support both bleeding-edge Tumbleweed and Leap or SLE, you need to adjust your specfile accordingly That is why you need to know the distribution version macros.
+It’s very common that you want to build your package for multiple target distributions. But if you want to support both bleeding-edge Tumbleweed and Leap or SLE, you need to adjust your specfile accordingly. That is why you need to know the distribution version macros.
 
 The best source of information is the [table](https://en.opensuse.org/openSUSE:Packaging_for_Leap#RPM_Distro_Version_Macros) on the openSUSE wiki that will show you the values of these distribution macros for every SLE/openSUSE version. If you want examples on how to identify a specific distro, see this [table](https://en.opensuse.org/openSUSE:Build_Service_cross_distribution_howto#Detect_a_distribution_flavor_for_special_code).
 
@@ -204,7 +211,7 @@ For example, in the past whenever you installed a new `.desktop` file in your pa
 Since 2017, these macros started being [replaced](https://lists.opensuse.org/opensuse-factory/2017-06/msg00898.html) with file triggers, which is a new feature of RPM 4.13. See [File triggers](#file-triggers) section for more info.
 
 
-### %make_jobs
+### %make\_jobs
 
 The `%make_jobs` macro was initially used in `cmake` packaging, but was later adopted in a number of other packages, confusingly sometimes with a slightly different definition. To make matters more confusing it also ended up being more complex than the expected `/usr/bin/make -jX`. Because of this and to bring the macro more inline with other macros such as meson's, `%make_jobs` has been replaced with `%cmake_build` when using `cmake` and `%make_build` for all other usages.
 
@@ -223,7 +230,35 @@ For completeness, we will add that the naming is also nicely aligned with the me
 The `%make_jobs` macro is still provided by KDE Framework `kf5-filesystem` package and is used by about 250 Factory packages, but it's use is being phased out.
 
 
-# Tags
+# Paths and Tags
+
+
+## Configuration files in /etc and /usr/etc
+
+
+---
+**TL;DR**
+
+  * `/usr/etc` will be the new directory for the distribution provided configuration files
+  * `/etc` directory will contain configuration files changed by administrator
+
+---
+
+
+Historically, configuration files were always installed in the `/etc` directory. Then if you edited this configuration file and updated the package, you often ended up with `.rpmsave` or `.rpmnew` extra files that you had to solve manually.
+
+Due to this suboptimal situation and mainly because of the need to fulfill new requirements of [transactional updates](https://en.opensuse.org/openSUSE:Packaging_for_transactional-updates) (atomic updates), the handling of configuration files had to be changed.
+
+[The new solution](https://en.opensuse.org/openSUSE:Packaging_UsrEtc) is to separate distribution provided configuration (`/usr/etc`) that is not modifiable and host specific configuration changed by  admins (`/etc`).
+ 
+This change of course requires a lot of work. First, the applications per se need to be adjusted to read the configuration from multiple locations rather than just good old `/etc` and there are of course a lot of packaging changes needed as well. There are [3 variants](https://en.opensuse.org/openSUSE:Packaging_UsrEtc#Variant_1_.28ideal_case.29) of how to implement the change within packaging and you as a packager should choose one that fits the best for your package.
+
+Also, there is a new RPM macro that refers to the `/usr/etc` location:
+
+```
+%_distconfdir  /usr/etc
+```
+
 
 
 ## Group: tag
@@ -243,6 +278,10 @@ They decided that including groups in spec files should be optional with the fin
 
 
 # News in RPM
+
+<p align="center">
+  <img src="/assets/RPM_Logo.png">
+</p>
 
 RPM minor version updates are released approximately once every two years and they always bring lots of interesting news that will make packaging even easier. Sometimes it’s a little harder to put some of these changes into practice as it can mean a lot of work or hundreds of packages or dealing with backwards compatibility issues. This is why you should find more information about their current adoption status in openSUSE before you use new features in your packages.
 
@@ -291,7 +330,7 @@ The following paragraphs present a couple of the most interesting features intro
 ---
 
 
-RPM 4.13 introduced `file triggers`, rpm scriptlets that get executed whenever a package installs or removes a file in a specific location (and also if a package with the trigger gets installed/removed).
+RPM 4.13 introduced file triggers, rpm scriptlets that get executed whenever a package installs or removes a file in a specific location (and also if a package with the trigger gets installed/removed).
 
 The main advantage of this concept is that a single package introduces a file trigger and it is then automatically applied to all newly installed/reinstalled packages. So, instead of each package carrying a macro for certain post processing, the code resides in the package implementing the file trigger and is transparently run everywhere.
 
@@ -302,7 +341,7 @@ The trigger types are:
 
 The `*in/*un/*postun` scriptlets are executed similarly to regular rpm scriptlets, before package installation/uninstallation/after uninstallation, depending on the variant.
 
-The` trans* `variants get executed once per transaction, after all the packages with files matching the trigger get processed. 
+The `trans*` variants get executed once per transaction, after all the packages with files matching the trigger get processed.
 
 **Example** (Factory `shared-mime-info`):
 
@@ -331,7 +370,6 @@ It’s highly possible that you haven’t noticed this change at all, as in gene
 
 ---
 
-
 The old and classic way to apply patches was:
 
 
@@ -351,12 +389,8 @@ Patch3:     	openssl-pkgconfig.patch
 With the recent RPM, you can use `%autosetup` and `%autopatch` macros to automate source unpacking and patch application. There is no need to specify each patch by name.
 
 
-```
-%autopatch
-```
 
-
-It applies all patches from the spec. The disadvantage is that it’s not natively usable with conditional patches or patches with differing fuzz levels.
+`%autopatch` applies all patches from the spec. The disadvantage is that it’s not natively usable with conditional patches or patches with differing fuzz levels.
 
 **Example** (Factory `openssl-1_1.spec`):
 
@@ -412,7 +446,7 @@ Patch3:     	openssl-pkgconfig.patch
 
 ---
 
-These are new spec file sections for declaring patches and sources with minimal boilerplate. They're intended to be used in conjunction with` %autopatch` or `%autosetup`.
+These are new spec file sections for declaring patches and sources with minimal boilerplate. They're intended to be used in conjunction with `%autopatch` or `%autosetup`.
 
 
 **Example** - normal way (Factory `openssl-1_1`):
@@ -471,7 +505,7 @@ Here the source files don't need any tagging. The patches are then applied by `%
 ---
 
 
-After 22 years of development, RPM 4.15 finally implemented `%elif`. It's now possible to simplify conditions which were only possible with another` %if `and `%else` pair.
+After 22 years of development, RPM 4.15 finally implemented `%elif`. It's now possible to simplify conditions which were only possible with another `%if` and `%else` pair.
 
 **Example** Using `%if` and `%else` only (`Java:packages/ant`):
 
@@ -655,39 +689,12 @@ $ rpm -qL sudo
 
 
 
-# Paths
-
-
-## Configuration files in /etc and /usr/etc 
-
-
----
-**TL;DR**
-
-  * `/usr/etc` is the new directory for the distribution provided configuration files
-  * `/etc` directory contain configuration files changed by administrator
-
----
-
-
-Historically, configuration files were always installed in the `/etc` directory. Then if you edited this configuration file and updated the package, you often ended up with `.rpmsave` or `.rpmnew` extra files that you had to solve manually.
-
-Due to this suboptimal situation and mainly because of the need to fulfill new requirements of [transactional updates](https://en.opensuse.org/openSUSE:Packaging_for_transactional-updates) (atomic updates), the handling of configuration files had to be changed.
-
-[The new solution](https://en.opensuse.org/openSUSE:Packaging_UsrEtc) is to separate distribution provided configuration (`/usr/etc`) that is not modifiable and host specific configuration changed by admins (`/etc`). 
-
-This change of course requires a lot of work. First, the applications per se need to be adjusted to read the configuration from multiple locations rather than just good old `/etc` and there are of course a lot of packaging changes needed as well. There are [3 variants](https://en.opensuse.org/openSUSE:Packaging_UsrEtc#Variant_1_.28ideal_case.29) of how to implement the change within packaging and you as a packager should choose one that fits the best for your package.
-
-Also, there is a new RPM macro that refers to the `/usr/etc` location:
-
-
-```
-%_distconfdir  /usr/etc
-```
-
-
-
 # OBS
+
+<p align="center">
+  <img width=500 height=229 src="/assets/OBS_logo.png">
+</p>
+
 
 
 ## New osc options
@@ -702,7 +709,7 @@ New `--version` option prints versions of the maintained package in each codestr
 
 
 ```
-# osc maintained --version sudo
+$ osc maintained --version sudo
 openSUSE:Leap:15.1:Update/sudo (version: unknown)
 openSUSE:Leap:15.2:Update/sudo (version: 1.8.22)
 ```
@@ -717,7 +724,7 @@ New `--incoming` option for request command shows only requests/reviews where th
 
 
 ```
-osc request list Base:System --incoming -s new,review
+$ osc request list Base:System --incoming -s new,review
 ```
 
 
@@ -728,7 +735,7 @@ Sometimes it’s just easier to watch the build status or build log in OBS GUI t
 
 
 ```
-osc browse [PROJECT [PACKAGE]
+$ osc browse [PROJECT [PACKAGE]
 ```
 
 
@@ -741,7 +748,7 @@ This is not something you want to call everyday. But if you need to delete the e
 
 
 ```
- osc deletereq PROJECT --all
+$ osc deletereq PROJECT --all
 ```
 
 
@@ -780,8 +787,8 @@ It uses the same invocation as `osc cat`:
 
 
 ```
-osc blame <file>
-osc blame <project> <package> <file>
+$ osc blame <file>
+$ osc blame <project> <package> <file>
 ```
 
 
@@ -818,7 +825,7 @@ The change was created by request 227064, so we can finally find the author of t
 
 
 ```
-> osc rq show -b 227064
+$ osc rq show -b 227064
 227064  State:accepted   By:jsikes       When:2020-09-22T17:07:07
         submit:          
         From: Request created: vitezslav_cizek -> Request got accepted: jsikes
@@ -831,7 +838,7 @@ You can also blame the meta files and show the author of each line of the meta f
 
 
 ```
-osc meta pkg <project> <package> --blame
+$ osc meta pkg <project> <package> --blame
 ```
 
 
@@ -858,13 +865,13 @@ Please note that it works on project and package metadata but it doesn't work on
 
 #### osc checkconstraints
 
-When you have a package that has special build constraints, you might be curious how many OBS workers are able to build it. `osc checkconstraints `does exactly that.
+When you have a package that has special build constraints, you might be curious how many OBS workers are able to build it. `osc checkconstraints` does exactly that.
 
 It can either print the list of matching workers
 
 
 ```
-# osc checkconstraints LibreOffice:Factory libreoffice openSUSE_Tumbleweed x86_64
+$ osc checkconstraints LibreOffice:Factory libreoffice openSUSE_Tumbleweed x86_64
 Worker     	 
 ------     	 
 x86_64:cloud137:1
@@ -879,7 +886,7 @@ or even a per-repo summary (when called from a package checkout):
 
 
 ```
-# osc checkconstraints                    	 
+$ osc checkconstraints
 Repository            	Arch                  	Worker
 ----------            	----                  	------
 openSUSE_Tumbleweed   	x86_64                	94
@@ -897,7 +904,7 @@ This command prints out detailed information about the worker's hardware, which 
 
 
 ```
-# osc workerinfo x86_64:goat01:1
+$ osc workerinfo x86_64:goat01:1
 ```
 
 
@@ -935,7 +942,7 @@ Here we can see, that an additional flavor is getting built:
 
 
 ```
-# osc r -r standard -a x86_64
+$ osc r -r standard -a x86_64
 standard         	x86_64 	python-pbr                 	succeeded
 standard         	x86_64 	python-pbr:test            	succeeded
 ```
