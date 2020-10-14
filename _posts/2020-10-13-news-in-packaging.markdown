@@ -124,7 +124,7 @@ as the new variant can help to shorten the build chain in OBS.
 
 ---
 
-It’s very common that you want to build your package for multiple target distributions. But if you want to support both bleeding-edge Tumbleweed and Leap or SLE, you need to adjust your specfile accordingly. That is why you need to know the distribution version macros.
+Commonly, you want to build your package for multiple target distributions. But if you want to support both bleeding-edge Tumbleweed and Leap or SLE, you need to adjust your specfile accordingly. That is why you need to know the distribution version macros.
 
 The best source of information is the [table](https://en.opensuse.org/openSUSE:Packaging_for_Leap#RPM_Distro_Version_Macros) on the openSUSE wiki that will show you the values of these distribution macros for every SLE/openSUSE version. If you want examples on how to identify a specific distro, see this [table](https://en.opensuse.org/openSUSE:Build_Service_cross_distribution_howto#Detect_a_distribution_flavor_for_special_code).
 
@@ -208,16 +208,16 @@ For example, in the past whenever you installed a new `.desktop` file in your pa
 ```
 
 
-Since 2017, these macros started being [replaced](https://lists.opensuse.org/opensuse-factory/2017-06/msg00898.html) with file triggers, which is a new feature of RPM 4.13. See [File triggers](#file-triggers) section for more info.
+Since 2017, these macros have started being [replaced](https://lists.opensuse.org/opensuse-factory/2017-06/msg00898.html) with file triggers, which is a new feature of RPM 4.13. See [File triggers](#file-triggers) section for more info.
 
 
 ### %make\_jobs
 
 The `%make_jobs` macro was initially used in `cmake` packaging, but was later adopted in a number of other packages, confusingly sometimes with a slightly different definition. To make matters more confusing it also ended up being more complex than the expected `/usr/bin/make -jX`. Because of this and to bring the macro more inline with other macros such as meson's, `%make_jobs` has been replaced with `%cmake_build` when using `cmake` and `%make_build` for all other usages.
 
-In the past, you called: `%cmake`, `%make_jobs,` and `%cmake_install.`
+In the past, you called: `%cmake`, `%make_jobs`, and `%cmake_install.`
 
-Now it’s more coherent and you call:  `%cmake`, `%cmake_build` and `%cmake_install` when using cmake and just replace `%make_jobs` with `%make_build` in other cases.
+Now it’s more coherent and you call:  `%cmake`, `%cmake_build`, and `%cmake_install` when using cmake and just replace `%make_jobs` with `%make_build` in other cases.
 
 For completeness, we will add that the naming is also nicely aligned with the meson and automake macros, that are:
 
@@ -225,7 +225,7 @@ For completeness, we will add that the naming is also nicely aligned with the me
 
  or
 
-`%configure`, `%make_build` and `%make_install`.
+`%configure`, `%make_build`, and `%make_install`.
 
 The `%make_jobs` macro is still provided by KDE Framework `kf5-filesystem` package and is used by about 250 Factory packages, but it's use is being phased out.
 
@@ -272,7 +272,7 @@ Also, there is a new RPM macro that refers to the `/usr/etc` location:
 ---
 
 
-Maybe you noticed a wild discussion about removing `Group:` tag that hit the opensuse-factory mailing list in Fall 2019. It arouses emotions to such an extent that the openSUSE Board had to step in and helped to resolve this conflict. 
+Maybe you noticed a wild discussion about removing `Group:` tag that hit the opensuse-factory mailing list in Fall 2019. It aroused emotions to such an extent that the openSUSE Board had to step in and helped to resolve this conflict. 
 
 They decided that including groups in spec files should be optional with the final decision resting with the maintainer.
 
@@ -283,7 +283,7 @@ They decided that including groups in spec files should be optional with the fin
   <img src="/assets/RPM_Logo.png">
 </p>
 
-RPM minor version updates are released approximately once every two years and they always bring lots of interesting news that will make packaging even easier. Sometimes it’s a little harder to put some of these changes into practice as it can mean a lot of work or hundreds of packages or dealing with backwards compatibility issues. This is why you should find more information about their current adoption status in openSUSE before you use new features in your packages.
+RPM minor version updates are released approximately once every two years and they always bring lots of interesting news that will make packaging even easier. Sometimes it’s a little harder to put some of these changes into practice as it can mean a lot of work or hundreds of packages or dealing with backward compatibility issues. This is why you should find more information about their current adoption status in openSUSE before you use new features in your packages.
 
 Current SUSE and openSUSE status of `rpm` package is as follows:
 
@@ -332,7 +332,7 @@ The following paragraphs present a couple of the most interesting features intro
 
 RPM 4.13 introduced file triggers, rpm scriptlets that get executed whenever a package installs or removes a file in a specific location (and also if a package with the trigger gets installed/removed).
 
-The main advantage of this concept is that a single package introduces a file trigger and it is then automatically applied to all newly installed/reinstalled packages. So, instead of each package carrying a macro for certain post processing, the code resides in the package implementing the file trigger and is transparently run everywhere.
+The main advantage of this concept is that a single package introduces a file trigger and it is then automatically applied to all newly installed/reinstalled packages. So, instead of each package carrying a macro for certain post-processing, the code resides in the package implementing the file trigger and is transparently run everywhere.
 
 The trigger types are:
 
@@ -594,7 +594,7 @@ Requires:    pack-capability
 ```
 
 
-So in order to require either of a set of packages, you had to modify each of them to introduce the new capability. That was a lot of extra effort and might not have always been possible.
+So in order to require one of a set of packages, you had to modify each of them to introduce the new capability. That was a lot of extra effort and might not have always been possible.
 
 Nowadays, using boolean dependencies, you can just simply add
 
@@ -624,7 +624,7 @@ The following boolean operators were introduced in RPM 4.13. Any set of availabl
     *   same as `if` above, plus requires the third operand to be met if the second one isn't fulfilled
     *   `Requires: (subpack1 if pack1 else pack2)`
 
-RPM 4.14 added operators which work on single packages. Unlike the operators above, there must be a single package that fulfills all the operands 
+RPM 4.14 added operators that work on single packages. Unlike the operators above, there must be a single package that fulfills all the operands 
 
 
 
@@ -679,7 +679,7 @@ That's also useful for limited systems (e.g. containers), which are built withou
 %doc NEWS README.SUSE
 ```
 
-The license files are annotated in the rpm, which allows a search for the license files of specific package:
+The license files are annotated in the rpm, which allows a search for the license files of a specific package:
 
 
 ```
@@ -720,7 +720,7 @@ openSUSE:Leap:15.2:Update/sudo (version: 1.8.22)
 
 New `--incoming` option for request command shows only requests/reviews where the project is the target.
 
-**Example** List all incoming request in state new or review for `Base:System` project:
+**Example** List all incoming request in the new or review state for `Base:System` project:
 
 
 ```
@@ -744,7 +744,7 @@ If you run it without any parameters, it will open the package in your current w
 
 ### Delete requests for entire projects
 
-This is not something you want to call everyday. But if you need to delete the entire project with all packages inside, you can just call:
+This is not something you want to call every day. But if you need to delete the entire project with all packages inside, you can just call:
 
 
 ```
@@ -760,7 +760,7 @@ This is a change you probably noticed. If you create a changelog entry via `osc 
 
 ### rdiff and diff enhancements
 
-Also the `rdiff` subcommand comes with new options. Probably the most useful is `rdiff --issues-only` that instead of printing the whole diff, shows just a list of fixed (mentioned really) issues (bugs, CVEs, Jiras):
+Also, the `rdiff` subcommand comes with new options. Probably the most useful is `rdiff --issues-only` that instead of printing the whole diff, shows just a list of fixed (mentioned really) issues (bugs, CVEs, Jiras):
 
 **Example** `osc rdiff --issues-only`:
 
@@ -865,7 +865,7 @@ Please note that it works on project and package metadata but it doesn't work on
 
 #### osc checkconstraints
 
-When you have a package that has special build constraints, you might be curious how many OBS workers are able to build it. `osc checkconstraints` does exactly that.
+When you have a package that has special build constraints, you might be curious about how many OBS workers are able to build it. `osc checkconstraints` does exactly that.
 
 It can either print the list of matching workers
 
@@ -966,7 +966,7 @@ Name:       	python-pbr%{psuffix}
 
 First, the spec defines a `flavor` macro as the value it got from OBS. Then it branches the spec depending on the `flavor` value. It sets a name suffix for the test flavor and defines a build conditional for easier further handling in the build and install sections.
 
-If you need an inspiration for your package, you can have a look at the following packages:
+If you need inspiration for your package, you can have a look at the following packages:
 
 `python39`, `libssh`, `python-pbr`, or `glibc`.
 
@@ -995,14 +995,14 @@ We realize that the changes described below are very, _very_, VERY old. But we p
 
 ## /var/run → /run
 
-Since openSUSE 12.2 (2012), `/run` directory was top-levelled as it was agreed across the distributions, that it doesn’t belong under` /var.` It’s still symlinked for backwards compatibility but you should definitely use `/run` (`%_rundir` macro).
+Since openSUSE 12.2 (2012), `/run` directory was top-levelled as it was agreed across the distributions, that it doesn’t belong under` /var.` It’s still symlinked for backward compatibility but you should definitely use `/run` (`%_rundir` macro).
 
 
 ## /usr Merge
 
 [/usr Merge](https://www.freedesktop.org/wiki/Software/systemd/TheCaseForTheUsrMerge/) was a big step in the history of all Linux distributions that helped to improve compatibility with other Unixes/Linuxes, GNU build systems or general upstream development.
 
-In short, it aimed to merge and move content from `/bin`, `/sbin`, `/lib` and /`lib64` into their counterpart directories under `/usr` (and creating backwards compatibility symbolic links of course). In openSUSE it happened around 2012.
+In short, it aimed to merge and move content from `/bin`, `/sbin`, `/lib` and /`lib64` into their counterpart directories under `/usr` (and creating backward compatibility symbolic links of course). In openSUSE it happened around 2012.
 
 
 ## SysV is dead
@@ -1022,7 +1022,7 @@ The only excuse for missing the fact that SysV is dead is just that you’ve bee
 ---
 
 
-If you read as far as here, you are probably a bit overwhelmed with all these new things in packaging. Maybe you ask yourself how you should remember all of it or more importantly, how you should keep all your maintained packages in consistency with all these changes. We have good news for you. There are automated tools for it.
+If you read as far as here, you are probably a bit overwhelmed with all these new things in packaging. Maybe you ask yourself how you should remember all of it or more importantly, how you should keep all your maintained packages consistent with all these changes. We have good news for you. There are automated tools for it.
 
 
 ## spec-cleaner
