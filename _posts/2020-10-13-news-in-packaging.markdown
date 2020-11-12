@@ -326,6 +326,7 @@ The following paragraphs present a couple of the most interesting features intro
 
   * File trigger is a scriptlet that gets executed whenever a package installs/removes a file in a specific location
   * Used e.g. in Factory for `texinfo`, `glib schemas`, `mime`, `icons`, and `desktop` files, so your package doesn't have to call database/cache updating macros anymore
+  * Currently (Nov, 2020), zypper [doesn't handle](https://bugzilla.opensuse.org/show_bug.cgi?id=1041742) `transfiletrigger` properly.
 
 ---
 
@@ -359,6 +360,8 @@ File triggers can easily replace database/cache updating macros (like e.g. `%ico
 
 You probably haven’t noticed this change at all, as in general having these database/cache updating macros in your specfile doesn’t harm anything now. The change has been made in corresponding packages (`texinfo`, `shared-mime-info`, `desktop-file-utils`, `glib2`) by adding a file trigger while all these old macros are now expanded to command without action. So you can safely remove them from your specfiles.
 
+**! IMPORTANT !**
+Currently (Nov, 2020), zypper doesn't handle `transfiletrigger` properly. If there is a `%transfiletrigger` and a `%post` scriptlet in the transaction, then zypper will only call the scriptlet and not your `%transfiletrigger`. See more information in [Bug#1041742](https://bugzilla.opensuse.org/show_bug.cgi?id=1041742).
 
 ## %autopatch and %autosetup
 
@@ -630,8 +633,8 @@ RPM 4.14 added operators that work on single packages. Unlike the operators abov
 
 *   `with`
     *   similar to `and`, both conditions need to be met
-    *   `BuildRequires: (python3-prometheus_client >= 0.4.0 with python3-prometheus_client &lt; 0.9.0)`
-    *   The `python3-prometheus_client` must be in the range &lt;0.4.0, 0.9.0)
+    *   `BuildRequires: (python3-prometheus_client >= 0.4.0 with python3-prometheus_client < 0.9.0)`
+    *   The `python3-prometheus_client` must be in the range <0.4.0, 0.9.0)
 *   `without`
     *   the first operand needs to be met, the second must not
     *   `Conflicts: (python2 without python2_split_startup)`
