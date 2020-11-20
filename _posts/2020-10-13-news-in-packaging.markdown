@@ -36,7 +36,7 @@ In this article, we will serve you with all recent news and important changes in
 
 ---
 
-We will start with the most recent change, which is the `%_libexecdir` macro. In the past, it was a standard practice to store binaries that are not intended to be executed directly by users or shell scripts in the `/usr/lib` directory. This has been changed with a release of FHS 3.0 that now [defines](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch04s07.html) that applications should store these internal binaries in the `/usr/libexec` directory.
+We will start with the most recent change, which is the `%_libexecdir` macro. It was and is a standard practice for GNU autoconf to default the `$libexecdir` variable to `${prefix}/libexec` (in practice resulting in `/usr/local/libexec`), and an unmodified copy of rpm mirrors this behavior in that `%_libexecdir` would expand to `%_prefix/libexec`. (Due to the common distro prefix being `/usr`, the resulting path is `/usr/libexec`.) This directory is a place to store binaries that are not intended to be executed directly by users or shell scripts. SUSE products however ran with a deviation that had set `%_libexecdir` to `%_prefix/lib` for many years. This has been changed with a release of FHS 3.0 that now [defines](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch04s07.html) that applications should store these internal binaries in the `/usr/libexec` directory.
 
 In openSUSE, the first discussions about changing the `%_libexecdir` macro from `/usr/lib` to `/usr/libexec` appeared in fall 2019 but it took several months for all affected packages to be fixed and the change to be adopted. It was fully [merged](https://lists.opensuse.org/opensuse-factory/2020-08/msg00226.html) in TW 0825 in August 2020.
 
