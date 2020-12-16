@@ -361,7 +361,7 @@ File triggers can easily replace database/cache updating macros (like e.g. `%ico
 You probably haven’t noticed this change at all, as in general having these database/cache updating macros in your specfile doesn’t harm anything now. The change has been made in corresponding packages (`texinfo`, `shared-mime-info`, `desktop-file-utils`, `glib2`) by adding a file trigger while all these old macros are now expanded to command without action. So you can safely remove them from your specfiles.
 
 **! IMPORTANT !**
-Currently (Nov, 2020), zypper doesn't handle `transfiletrigger` properly. If there is a `%transfiletrigger` and a `%post` scriptlet in the transaction, then zypper will only call the scriptlet and not your `%transfiletrigger`. See more information in [Bug#1041742](https://bugzilla.opensuse.org/show_bug.cgi?id=1041742).
+Currently (Nov, 2020), zypper doesn't handle `transfiletrigger` properly. If there is a `%transfiletrigger` and a `%posttrans` scriptlet in the transaction, then zypper will only call the scriptlet and not your `%transfiletrigger`. See more information in [Bug#1041742](https://bugzilla.opensuse.org/show_bug.cgi?id=1041742).
 
 ## %autopatch and %autosetup
 
